@@ -21064,7 +21064,7 @@ if (typeof exports !== "undefined") {
   }
   function formatNumeral(n, format, roundingFunction) {
     var output;
-    if (format.indexOf('$') > -1) {
+    if ( format.indexOf( languages[currentLanguage].currency.symbol ) > -1 ) {
       output = formatCurrency(n, format, roundingFunction);
     } else if (format.indexOf('%') > -1) {
       output = formatPercentage(n, format, roundingFunction);
@@ -21110,20 +21110,27 @@ if (typeof exports !== "undefined") {
     return n._value;
   }
   function formatCurrency(n, format, roundingFunction) {
-    var symbolIndex = format.indexOf('$'),
+	
+	// Use the current currency symbol from Numeral rather than 
+	// assuming the symbol is a dollar sign $
+	var currentCurrencySymbol = languages[currentLanguage].currency.symbol,
+		currencySpace = currentCurrencySymbol + ' ',
+		spaceCurrency = ' ' + currentCurrencySymbol;
+		
+    var symbolIndex = format.indexOf( currentCurrencySymbol ),
         openParenIndex = format.indexOf('('),
         minusSignIndex = format.indexOf('-'),
         space = '',
         spliceIndex,
         output;
-    if (format.indexOf(' $') > -1) {
+    if (format.indexOf(spaceCurrency) > -1) {
       space = ' ';
-      format = format.replace(' $', '');
-    } else if (format.indexOf('$ ') > -1) {
+      format = format.replace(spaceCurrency, '');
+    } else if (format.indexOf(currencySpace) > -1) {
       space = ' ';
-      format = format.replace('$ ', '');
+      format = format.replace(currencySpace, '');
     } else {
-      format = format.replace('$', '');
+      format = format.replace(currentCurrencySymbol, '');
     }
     output = formatNumber(n._value, format, roundingFunction);
     if (symbolIndex <= 1) {
